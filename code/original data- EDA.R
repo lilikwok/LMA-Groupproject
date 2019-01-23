@@ -4,7 +4,7 @@ library(readr)
 library(tidyverse)
 
 #load data
-data <- read_csv("~/ECON 5300/ss16pca.csv")
+data <- read_csv("ss16pca.csv")
 summary(data)
 
 #original_data
