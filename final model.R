@@ -104,8 +104,9 @@ orignal.Equation <- lm(log(earnings,base = exp(1)) ~ male + Non_school+no_HS_dip
 summary(orignal.Equation)
 bptest(orignal.Equation)
 
-orignal.model <- coeftest(orignal.Equation, vcov = vcovHC(orignal.Equation,type = "HC"))
+coeftest(orignal.Equation, vcov = vcovHC(orignal.Equation,type = "HC"))
 
+orignal.se <- sqrt(diag(vcovHC(orignal.Equation,type = "HC")))
 #Estimate Logarithmic Model with Age in Quadratic Form
 LogEarnings.Equation =  lm(log(earnings,base = exp(1)) ~ male+age + I(age*age) + Non_school+no_HS_diploma
                            + No_college_degree + associate+bachelor+ master+professional
@@ -123,13 +124,12 @@ bptest(LogEarnings.Equation)
 
 # Logrithm regression Robust standard 
 
-log.model <- coeftest(LogEarnings.Equation, vcov = vcovHC(LogEarnings.Equation,type = "HC"))
-
+coeftest(LogEarnings.Equation, vcov = vcovHC(LogEarnings.Equation,type = "HC"))
+log.se <- sqrt(diag(vcovHC(LogEarnings.Equation,type = "HC")))
 #output beautiful format
-stargazer(orignal.model,log.model, 
-          title = "Table 2 /n Estimated Log (Earnings) Equations",
-          type = "text", out = "model1.txt")
-stargazer(orignal.Equation,LogEarnings.Equation, 
+
+stargazer(orignal.Equation,LogEarnings.Equation,
+          se = list(orignal.se,log.se),
           title = "Table 2 /n Estimated Log (Earnings) Equations",
           type = "text", out = "model3.txt")
 ##################################################################
@@ -151,7 +151,7 @@ bptest(male.logequation)
 
 # robust standard error for log regression for male 
 male.model <- coeftest(male.logequation, vcov = vcovHC(male.logequation,type = "HC"))
-
+male.se <- sqrt(diag(vcovHC(male.logequation,type = "HC")))
 # Female 
 Female <- model_variables %>%
   filter(male == 0)
@@ -168,13 +168,12 @@ bptest(female.logequation)
 
 # robust standard error for log regression for male 
 female.model <- coeftest(female.logequation, vcov = vcovHC(female.logequation,type = "HC"))
-
+female.se <- sqrt(diag(vcovHC(female.logequation,type = "HC")))
 # table 
-stargazer(male.model,female.model,
-          type = "text",
-          title = "Table 3 /n Estimated Log (Earnings) Equations by Gender",
-          out = "model2.txt")
+
 stargazer(male.logequation ,female.logequation,
+          se = list(male.se,female.se),
           type = "text",
-          title = "Table 3 /n Estimated Log (Earnings) Equations by Gender",
-          out = "model4.txt")
+          title = "Table 3. Estimated Log (Earnings) Equations by Gender",
+          out = "gender.txt",
+          column.labels = c("Male","Female"),align = TRUE)
